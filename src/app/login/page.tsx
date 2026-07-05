@@ -20,13 +20,17 @@ export default async function LoginPage({
   const t = await getTranslations("login");
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-4 p-4">
-      <div className="w-full max-w-sm flex justify-end">
+    <div className="relative flex flex-1 flex-col items-center justify-center gap-6 overflow-hidden p-4">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute top-[-25%] left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-primary/30 blur-[100px]"
+      />
+      <div className="z-10 flex w-full max-w-sm justify-end">
         <LocaleSwitcher currentLocale={locale} />
       </div>
-      <Card className="w-full max-w-sm">
+      <Card className="z-10 w-full max-w-sm">
         <CardHeader>
-          <CardTitle>ORBI City</CardTitle>
+          <CardTitle className="text-2xl">ORBI City</CardTitle>
           <CardDescription>{t("subtitle")}</CardDescription>
         </CardHeader>
         <CardContent>

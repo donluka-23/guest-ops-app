@@ -33,8 +33,8 @@ export default async function SettingsPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-6">
-      <h1 className="text-xl font-semibold">{t("title")}</h1>
+    <div className="flex flex-1 flex-col gap-5 p-4 sm:p-8">
+      <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
       <Tabs defaultValue="rooms">
         <TabsList>
           <TabsTrigger value="rooms">{t("tabs.rooms")}</TabsTrigger>

@@ -65,6 +65,7 @@ Guest names/phone numbers are real PII from real bookings: no PII logging to con
 - 2026-07-05: Local guide tab (`property_extras`) built — third settings tab, completing the step-4.5 mini-phase. Migration/RLS shown for confirmation before applying, per standing practice. Identity-field lock applied to `category` from the start (per the process rule established in the prior bug-fix pass) rather than needing a follow-up fix. i18n completeness verified via script before calling it done (73 paths resolved in both message files). Property-isolation verified with the same RLS-scoped role/JWT test pattern as rooms/templates/guests.
 - 2026-07-05: Step 5 (Today dashboard) built with contextual one-click buttons (arrivals get check-in-info; departures get checkout reminder + review request) rather than exposing all five template stages per guest — favors the dashboard's one-click-per-context intent over full flexibility; revisit if welcome/pre_arrival need surfacing here too. Time-saved stat uses a documented 3-min-per-message placeholder assumption, not a measured figure. Template selection falls back to the `en` variant if a guest's own language template is missing, rather than erroring, with a disabled "no template" button as the final fallback. Testing surfaced a real Base UI bug (not the earlier i18n one): `Select.Value` can't resolve an item's label until that item has rendered in the popup, so any preselected value (edit-mode defaults, the locale switcher) showed its raw stored value instead — a room's UUID, or `"ka"` instead of `"ქართული"`. Fixed app-wide with Base UI's documented `items` prop on every `Select`; see the shadcn/ui note for the pattern to use on any new `Select` going forward.
 - 2026-07-05: Step 6 (public guidebook page) built. Extended `get_room_guidebook()` to also return `property_extras` as a `jsonb` array (Postgres requires `DROP`+`CREATE`, not `CREATE OR REPLACE`, to change a function's return columns) and to fall back to the property's default checkout time — a latent gap from when `default_checkout_time` was added but this function wasn't updated to match. Guest-facing language handling is a deliberately separate, small dictionary (`ka`/`en`/`ru`, in-page toggle), not an extension of the staff-only `src/i18n` cookie system, since they serve different audiences with different needs. Verified fully public access (zero cookies) and graceful not-found handling via direct `curl`, not just code review.
+- 2026-07-05: Step 7 (styling/empty-state pass) built around one terracotta accent (`#e14d2c`) + warm-neutral base, applied at the shared component level (Button/Input/Select/Card) so it took effect everywhere at once. Verification initially relied on the user photographing a physical screen with a phone, which flattened real changes (shadows, saturation, spacing) to the point of looking like no change happened — not a code problem, a verification-method problem. Fixed by setting up Playwright-based real screenshots (CLI for public pages, a small scripted login for authenticated ones) as the standing verification method for all future UI work — see "UI verification process" section. Exact color/component values captured in "Design system" section so future changes work from real numbers, not adjectives.
 - 2026-07-05: Step 1 complete. GitHub repo: [donluka-23/guest-ops-app](https://github.com/donluka-23/guest-ops-app) (branch `main`). Supabase project connected (URL/anon key in `.env.local`, gitignored; `.env.local.example` documents the required vars — note `.gitignore` uses `.env*` with a `!.env*.example` exception, so new example files must follow that naming). Vercel import deferred — user will connect the GitHub repo via the Vercel dashboard themselves when ready (not yet done as of this entry).
 
 ## Manual setup: bootstrapping a new property
@@ -180,6 +181,39 @@ This project's shadcn/ui was scaffolded on `@base-ui/react`, not Radix. Composit
 
 **`Select` always needs an `items` prop when the display label differs from the stored value.** `Select.Value` has no way to know an item's label until that `SelectItem` has actually rendered inside the popup — which normally doesn't happen until the user opens it. On first render with a preselected value (`defaultValue` on edit, or a controlled `value` like the locale switcher), it falls back to showing the raw stored value instead of the label — e.g. a room's UUID instead of its name, or `"ka"` instead of `"ქართული"`. Found via a real screenshot (2026-07-05) after step 5 testing — the guest edit form's Room field showed a raw UUID, and the locale switcher showed `"ka"`, not `"ქართული"`. Fixed everywhere by passing `items={Object.fromEntries(values.map(v => [v, label(v)]))}` (or the plain label record, for the locale switcher) directly to `<Select>` — this is Base UI's own documented mechanism for exactly this case, resolves synchronously, and needs no popup interaction. **Any new `Select` whose items have a different label than their value must get this from the start.**
 
+## Design system (step 7)
+
+One warm-neutral base palette + one terracotta accent, per the original spec. Defined as OKLCH custom properties in `src/app/globals.css`; exact sRGB values (computed via the standard OKLCH→sRGB math, not eyeballed) for reference/reuse:
+
+| Token | OKLCH | Hex |
+|---|---|---|
+| `--background` | `oklch(0.985 0.004 60)` | `#fcf9f7` |
+| `--foreground` | `oklch(0.2 0.008 50)` | `#191513` |
+| `--card` | `oklch(0.995 0.003 60)` | `#fffdfb` |
+| `--primary` (the one accent) | `oklch(0.62 0.19 34)` | `#e14d2c` |
+| `--primary-foreground` | `oklch(0.99 0.005 60)` | `#fefbf8` |
+| `--muted` / `--secondary` | `oklch(0.955 0.008 55)` | `#f5efeb` |
+| `--muted-foreground` | `oklch(0.5 0.014 50)` | `#6a615c` |
+| `--border` / `--input` | `oklch(0.9 0.01 55)` | `#e4dcd8` |
+
+Dark-mode tokens are also defined (lighter primary `oklch(0.72 0.17 34)` / `#fc7659` for contrast on a dark card) but nothing in the app currently toggles the `.dark` class from a user control — the app always renders in light mode today. The dark tokens are used deliberately in one place: `.dark` can be applied to a scoped wrapper (not just `<html>`) to get an already-contrast-tuned "dark section on a light page" effect for free, since every shadcn primitive reads the same CSS variables.
+
+Component primitives (all shared, so a change here applies everywhere at once): **Button** default size `h-10`/`px-4`/`rounded-lg`/`shadow-sm`, primary variant filled solid; **Input**/**Select** trigger both `h-10` to align in form rows; **Card** `rounded-xl`, `shadow-sm` + `ring-1 ring-foreground/8`, `20px` internal padding. Page containers: `p-4 sm:p-8`, `gap-5`–`gap-6` between sections.
+
+**Destructive stays its own red** (`oklch(0.577 0.245 27.325)`), not terracotta-tinted — adjacent warm hues would blur "primary action" and "danger" together.
+
+## UI verification process (established 2026-07-05 — apply to every future styling/UI change)
+
+A build/lint pass and a `curl` 200 response prove the code compiles and the server responds — **neither proves the intended visual change is actually visible on the page.** A styling pass was reported done multiple times on that basis alone while the user, verifying via phone photos of a physical screen, kept seeing what looked like no change. Two real problems compounded: (a) phone photos of a monitor genuinely flatten shadows, subtle saturation, and small spacing/sizing differences almost completely — a real limitation of that feedback loop, not the user's error; (b) a mid-pass edit was rejected by the user and the response moved on without confirming the file was actually left in a known state.
+
+**The fix, now standard practice for this project:**
+
+- `npx playwright screenshot <url> <file>` works in this environment without adding `playwright` to the project's `package.json` (it's a verification tool, not a product dependency) — confirmed working, browser binaries already available, no install step needed.
+- For pages requiring login, a small Node script using the full `playwright` package (installed with `npm install playwright --no-save` in the scratchpad directory, never the project) drives an actual login (selectors: `#email`, `#password`, `button[type="submit"]`, waits for `waitForURL` to `/dashboard`) and screenshots the authenticated pages. The login password was provided once, used only as an in-memory env var for that script invocation, never written to any file or logged.
+- **After any styling/UI change, take a real screenshot of the actual changed page and look at it before reporting anything done.** If the intended change isn't visibly present in the screenshot, the task isn't done — go find out why, don't report completion.
+- Confirm every edit actually landed, especially after a tool-reported failure or rejection — re-read the file to verify its actual current content rather than assuming an edit applied.
+- For a multi-primitive pass (Button, Input, Card, nav, etc. all at once), consider verifying incrementally rather than only at the very end — a single failed edit in the middle is easy to miss five files later.
+
 ## File/folder structure conventions
 
 - Scaffolded with `create-next-app@latest`: TypeScript, Tailwind, App Router, `src/` dir, `@/*` import alias, Turbopack (default in this Next version, no flag needed).
@@ -205,5 +239,5 @@ This project uses **Next.js 16.2.10**, which has real breaking changes vs. Next 
 4.5. i18n + property settings (Rooms/Templates/Local guide tabs) — done, inserted ahead of step 5 on host feedback; see "Internationalization", "Property settings", and "Local guide" sections below. Guest-facing exposure of Local guide content is explicitly deferred to step 6.
 5. Today dashboard + WhatsApp send — done, see "Today dashboard" section below
 6. Public guidebook page — done, see "Public guidebook page" section below
-7. Styling/empty-state pass — not started
+7. Styling/empty-state pass — done, see "Design system" and "UI verification process" sections below
 8. Deploy + pilot walkthrough — not started

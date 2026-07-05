@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { useTranslations } from "next-intl";
+import { CheckIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -39,7 +40,10 @@ export function PropertyDefaultsForm({ property }: { property: Property }) {
             {pending ? tCommon("saving") : tCommon("save")}
           </Button>
           {state?.success && (
-            <span className="text-sm text-muted-foreground">{t("saved")}</span>
+            <span className="flex items-center gap-1 text-sm text-primary">
+              <CheckIcon className="size-4" />
+              {t("saved")}
+            </span>
           )}
           {state?.formError && (
             <p className="w-full text-sm text-destructive">

@@ -1,4 +1,6 @@
 import { getTranslations } from "next-intl/server";
+import { LogInIcon, LogOutIcon, SendIcon } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { verifySession } from "@/lib/supabase/dal";
 import { createClient } from "@/lib/supabase/server";
 import { getOwnProperty } from "@/lib/property/current";
@@ -76,100 +78,122 @@ export default async function DashboardPage() {
   const minutesSaved = (sentCount ?? 0) * 3;
   const hoursSaved = (minutesSaved / 60).toFixed(1);
 
+  const arrivingList = (arriving ?? []) as unknown as Guest[];
+  const departingList = (departing ?? []) as unknown as Guest[];
+
   return (
-    <div className="flex flex-1 flex-col gap-6 p-6">
+    <div className="flex flex-1 flex-col gap-6 p-4 sm:p-8">
       <div>
-        <h1 className="text-xl font-semibold">{t("title")}</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
         <p className="text-sm text-muted-foreground">
           {t("signedInAs", { email: user.email ?? "" })}
         </p>
       </div>
 
-      <div className="flex flex-wrap gap-4 rounded-lg border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
-        <span>{t("messagesSent", { count: sentCount ?? 0 })}</span>
-        <span>{t("timeSaved", { hours: hoursSaved })}</span>
+      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
+        <SendIcon className="size-4 shrink-0 text-primary" />
+        <span className="text-sm font-medium">{t("messagesSent", { count: sentCount ?? 0 })}</span>
+        <span className="text-sm text-muted-foreground">{t("timeSaved", { hours: hoursSaved })}</span>
       </div>
 
-      <section className="flex flex-col gap-2">
-        <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-          {t("arrivingToday")}
-        </h2>
-        {!arriving || arriving.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t("noArrivals")}</p>
-        ) : (
-          <div className="flex flex-col divide-y rounded-lg border">
-            {(arriving as unknown as Guest[]).map((guest) => {
-              const room = guest.rooms as unknown as Room | null;
-              const template = templateFor(allTemplates, "checkin_day", guest.language);
-              const message = template ? renderTemplate(template.content, guestVars(guest)) : "";
-              return (
-                <div key={guest.id} className="flex items-center justify-between gap-4 p-3">
-                  <div className="flex min-w-0 flex-col gap-0.5">
-                    <span className="text-sm font-medium">{guest.name}</span>
-                    <span className="text-sm text-muted-foreground">{room?.label ?? "—"}</span>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <LogInIcon className="size-4 text-primary" />
+            {t("arrivingToday")}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {arrivingList.length === 0 ? (
+            <p className="text-sm text-muted-foreground">{t("noArrivals")}</p>
+          ) : (
+            <div className="flex flex-col divide-y rounded-lg border">
+              {arrivingList.map((guest) => {
+                const room = guest.rooms as unknown as Room | null;
+                const template = templateFor(allTemplates, "checkin_day", guest.language);
+                const message = template
+                  ? renderTemplate(template.content, guestVars(guest))
+                  : "";
+                return (
+                  <div
+                    key={guest.id}
+                    className="flex items-center justify-between gap-4 p-3"
+                  >
+                    <div className="flex min-w-0 flex-col gap-0.5">
+                      <span className="text-sm font-medium">{guest.name}</span>
+                      <span className="text-sm text-muted-foreground">{room?.label ?? "—"}</span>
+                    </div>
+                    <SendButton
+                      guestId={guest.id}
+                      templateId={template?.id ?? null}
+                      phone={guest.phone}
+                      message={message}
+                      label={t("sendCheckinInfo")}
+                    />
                   </div>
-                  <SendButton
-                    guestId={guest.id}
-                    templateId={template?.id ?? null}
-                    phone={guest.phone}
-                    message={message}
-                    label={t("sendCheckinInfo")}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
+                );
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
-      <section className="flex flex-col gap-2">
-        <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-          {t("departingToday")}
-        </h2>
-        {!departing || departing.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t("noDepartures")}</p>
-        ) : (
-          <div className="flex flex-col divide-y rounded-lg border">
-            {(departing as unknown as Guest[]).map((guest) => {
-              const room = guest.rooms as unknown as Room | null;
-              const checkoutTemplate = templateFor(allTemplates, "checkout", guest.language);
-              const reviewTemplate = templateFor(allTemplates, "review_request", guest.language);
-              const vars = guestVars(guest);
-              const checkoutMessage = checkoutTemplate
-                ? renderTemplate(checkoutTemplate.content, vars)
-                : "";
-              const reviewMessage = reviewTemplate
-                ? renderTemplate(reviewTemplate.content, vars)
-                : "";
-              return (
-                <div key={guest.id} className="flex items-center justify-between gap-4 p-3">
-                  <div className="flex min-w-0 flex-col gap-0.5">
-                    <span className="text-sm font-medium">{guest.name}</span>
-                    <span className="text-sm text-muted-foreground">{room?.label ?? "—"}</span>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <LogOutIcon className="size-4 text-primary" />
+            {t("departingToday")}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {departingList.length === 0 ? (
+            <p className="text-sm text-muted-foreground">{t("noDepartures")}</p>
+          ) : (
+            <div className="flex flex-col divide-y rounded-lg border">
+              {departingList.map((guest) => {
+                const room = guest.rooms as unknown as Room | null;
+                const checkoutTemplate = templateFor(allTemplates, "checkout", guest.language);
+                const reviewTemplate = templateFor(allTemplates, "review_request", guest.language);
+                const vars = guestVars(guest);
+                const checkoutMessage = checkoutTemplate
+                  ? renderTemplate(checkoutTemplate.content, vars)
+                  : "";
+                const reviewMessage = reviewTemplate
+                  ? renderTemplate(reviewTemplate.content, vars)
+                  : "";
+                return (
+                  <div
+                    key={guest.id}
+                    className="flex flex-wrap items-center justify-between gap-3 p-3"
+                  >
+                    <div className="flex min-w-0 flex-col gap-0.5">
+                      <span className="text-sm font-medium">{guest.name}</span>
+                      <span className="text-sm text-muted-foreground">{room?.label ?? "—"}</span>
+                    </div>
+                    <div className="flex shrink-0 gap-2">
+                      <SendButton
+                        guestId={guest.id}
+                        templateId={checkoutTemplate?.id ?? null}
+                        phone={guest.phone}
+                        message={checkoutMessage}
+                        label={t("sendCheckoutReminder")}
+                      />
+                      <SendButton
+                        guestId={guest.id}
+                        templateId={reviewTemplate?.id ?? null}
+                        phone={guest.phone}
+                        message={reviewMessage}
+                        label={t("sendReviewRequest")}
+                        variant="outline"
+                      />
+                    </div>
                   </div>
-                  <div className="flex shrink-0 gap-2">
-                    <SendButton
-                      guestId={guest.id}
-                      templateId={checkoutTemplate?.id ?? null}
-                      phone={guest.phone}
-                      message={checkoutMessage}
-                      label={t("sendCheckoutReminder")}
-                    />
-                    <SendButton
-                      guestId={guest.id}
-                      templateId={reviewTemplate?.id ?? null}
-                      phone={guest.phone}
-                      message={reviewMessage}
-                      label={t("sendReviewRequest")}
-                      variant="outline"
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
+                );
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
