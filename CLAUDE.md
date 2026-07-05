@@ -18,7 +18,7 @@ Implemented in `supabase/migrations/20260705072542_initial_schema.sql`:
 
 - `properties` — id, name, address, created_at. One row per aparthotel.
 - `property_staff` *(new — not in original spec)* — id, property_id, user_id (→ `auth.users`), role (`owner`/`staff`), created_at. Join table driving all RLS scoping; added so policies check membership rows instead of a hardcoded property id.
-- `rooms` — id (uuid, also doubles as the unguessable public guidebook link token), property_id, label, wifi_ssid, wifi_password, checkout_time, house_rules, map_url, created_at, updated_at.
+- `rooms` — id (uuid, also doubles as the unguessable public guidebook link token), property_id, label, wifi_ssid, wifi_password, checkout_time, house_rules, map_url, created_at, updated_at. **One placeholder row exists** (`"Room 1"` for ORBI City, label only, no WiFi/checkout/house rules) — created to unblock testing the guest flow before real room data was available. Needs to be replaced/expanded with real rooms during the actual room-seeding pass.
 - `guests` — id, property_id (denormalized for RLS), room_id, name, phone, check_in_date, check_out_date, language (`en`/`ru`/`ka`), source_channel (`booking_com`/`airbnb`/`home_ge`/`myhome_ge`/`ss_ge`/`direct`/`walk_in`), status (`upcoming`/`checked_in`/`checked_out`), created_at, updated_at.
 - `message_templates` — id, property_id, stage (`welcome`/`pre_arrival`/`checkin_day`/`checkout`/`review_request`), language, content, created_at, updated_at.
 - `message_log` — id, property_id, guest_id, template_id (nullable, `on delete set null`), sent_by (→ `auth.users`), sent_at. Append-only: insert/select policies only, no update/delete for any role (see decisions log).
@@ -38,6 +38,15 @@ Two distinct access zones:
    - Full login → dashboard → logout → blocked-again flow tested against the running dev server: verified via server logs that `login()` only redirects (303) on real credential success (a failed `signInWithPassword` returns `{error}` and re-renders instead of redirecting), `logout()` calls `supabase.auth.signOut()` before redirecting, and a `/dashboard` request immediately after logout resolves to `/login` again (proving the cookie was actually invalidated, not just navigated away from).
 2. **Public zone** — guest-facing guidebook page, one per room, no login. There is **no public RLS policy on any table** — `rooms` (which holds WiFi/house rules/checkout time) is fully locked. The only public surface is `get_room_guidebook(room_id uuid)`, a `SECURITY DEFINER` function granted `EXECUTE` to `anon`, returning just the guidebook-safe columns for one room. This makes the split structural rather than UI-hidden: new columns added to `rooms` later are private by default and only become guest-visible if deliberately added to that function's return list. `get_room_guidebook` is not gated by guest stay dates (see decisions log) — it's evergreen per-room content, not guest-specific.
 
+**Add/edit guest flow (step 4):** `src/app/dashboard/guests/actions.ts`'s `createGuest`/`updateGuest` never trust a client-supplied `property_id`. They look up the selected room through the caller's own RLS-scoped Supabase client and derive `property_id` from that room row. This closes a gap that would otherwise exist even with `is_staff_of(property_id)` alone: without this, a staff member of property A could submit `property_id=A` (passes the check) with a `room_id` actually belonging to property B, inserting a guest whose room doesn't match its own property_id. Deriving `property_id` from the room makes that combination impossible to submit in the first place, and RLS still rejects it as a second layer if the room lookup ever returned something it shouldn't.
+
+**Property-isolation test (2026-07-05):** verified directly at the database layer, not just through the UI, using `set local role authenticated; set local request.jwt.claim.sub = '<uid>'` inside a rolled-back transaction to exercise the real RLS policies as our ORBI City staff member (`35cbb6f1-...`), against a throwaway second property/room created and deleted for this test only:
+
+1. `SELECT` on a room belonging to the other (unlinked) property → 0 rows — invisible, so it could never appear in the room dropdown.
+2. `INSERT` into `guests` with that other property's `property_id`/`room_id` → rejected: `ERROR 42501: new row violates row-level security policy for table "guests"`.
+3. `SELECT` on ORBI City's own room → 1 row (positive control — RLS isn't just blocking everything).
+4. `INSERT` into `guests` using ORBI City's own room → succeeded, row returned, then rolled back so no test data persisted.
+
 **Bootstrapping a new property:** every insert (including into `property_staff`) requires the inserter to already be staff, so the first property row and first `property_staff` row must be created manually via the Supabase SQL editor (runs as `postgres`, bypasses RLS) or the service-role key — a deliberate one-time step per property, not an in-app flow. No signup/invite UI is built.
 
 Guest names/phone numbers are real PII from real bookings: no PII logging to console/analytics, no secrets committed, `.env.local` gitignored from commit one.
@@ -48,6 +57,7 @@ Guest names/phone numbers are real PII from real bookings: no PII logging to con
 - 2026-07-05: Schema/RLS design decisions (see `supabase/migrations/20260705072542_initial_schema.sql`): (a) `message_log` is append-only — insert/select policies only, no update/delete for any role, because it's the audit trail behind "messages sent"/"time saved" stats and a mutable log isn't an audit trail; a mis-logged send gets a corrective new row, not an edit. (b) `property_staff` (and every other insert) requires the inserter to already be staff, so the first staff row for a new property can't come through the app — it's inserted once, manually, via the Supabase SQL editor (runs as `postgres`, bypasses RLS) or the service-role key, as a deliberate one-time bootstrap step, not a gap. No signup/invite flow is built. (c) `get_room_guidebook(room_id)` returns content indefinitely, not gated by any guest's stay dates — the guidebook describes the room (WiFi, house rules, checkout time, map), not a specific guest, carries no guest PII, and every future guest of that room needs the same content, so date-gating would add complexity without reducing real exposure. Revisit this if guest-specific content is ever added to the guidebook.
 - 2026-07-05: Bootstrapped the first real property (ORBI City) and its first staff row via `supabase db query --linked` (not the app, not a tracked migration — one-time data, see "Manual setup" section below). Assigned role `owner` rather than `staff` since this person holds the account and is the sole staff member; the two roles behave identically under `is_staff_of()` today but the distinction is preserved for when hired staff are added later.
 - 2026-07-05: Step 3 (auth) built as login-only, no signup UI — matches the manual-bootstrap staffing model already in place. Two-layer protection (`proxy.ts` optimistic redirect + `verifySession()` DAL check in each protected page) rather than relying on proxy alone, per Next.js's own guidance that a routing/matcher change can silently drop proxy coverage. Tested end-to-end against a running dev server rather than just typechecked. See security architecture section for full detail.
+- 2026-07-05: Step 4 (add/edit guest) built with inline field-level validation (hand-rolled, no schema library — the form is small enough not to need one, and Zod isn't in the approved stack). `property_id` is always derived server-side from the selected room, never trusted from client input, closing a room/property-mismatch gap that `is_staff_of(property_id)` alone wouldn't catch. Cross-property isolation verified directly against the database with a real RLS-scoped role/JWT test (not just via the UI) — see security architecture section for the 4-part test and result. Seeded one placeholder room ("Room 1", ORBI City) to unblock testing since no real room data existed yet; needs replacing during the real room-seeding pass.
 - 2026-07-05: Step 1 complete. GitHub repo: [donluka-23/guest-ops-app](https://github.com/donluka-23/guest-ops-app) (branch `main`). Supabase project connected (URL/anon key in `.env.local`, gitignored; `.env.local.example` documents the required vars — note `.gitignore` uses `.env*` with a `!.env*.example` exception, so new example files must follow that naming). Vercel import deferred — user will connect the GitHub repo via the Vercel dashboard themselves when ready (not yet done as of this entry).
 
 ## Manual setup: bootstrapping a new property
@@ -77,6 +87,10 @@ Use role `'owner'` for the person who holds the account and is the first/primary
 - Automated test suite beyond basic sanity checks (manual QA checklist instead)
 - Any AI chatbot or auto-reply to guests
 
+## shadcn/ui note (Base UI, not Radix)
+
+This project's shadcn/ui was scaffolded on `@base-ui/react`, not Radix. Composition uses a `render` prop (`<Button render={<Link href="..." />}>text</Button>`), not `asChild`. When rendering `Button` as a non-`<button>` element (e.g. a `Link`), also pass `nativeButton={false}` — otherwise Base UI logs a console warning that it expected a native button and native button semantics are lost.
+
 ## File/folder structure conventions
 
 - Scaffolded with `create-next-app@latest`: TypeScript, Tailwind, App Router, `src/` dir, `@/*` import alias, Turbopack (default in this Next version, no flag needed).
@@ -97,7 +111,7 @@ This project uses **Next.js 16.2.10**, which has real breaking changes vs. Next 
 1. Project scaffold — done
 2. DB schema + RLS — not started
 3. Auth — done (login only, no signup UI; see security architecture section for how)
-4. Add/edit guest flow — not started
+4. Add/edit guest flow — done (see security architecture section for the property-isolation test)
 5. Today dashboard + WhatsApp send — not started
 6. Public guidebook page — not started
 7. Styling/empty-state pass — not started

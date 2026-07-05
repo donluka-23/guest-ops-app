@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { verifySession } from "@/lib/supabase/dal";
 import { logout } from "./actions";
@@ -21,9 +22,15 @@ export default async function DashboardPage() {
         </form>
       </div>
       <p className="text-sm text-muted-foreground">
-        The Today dashboard (arrivals, departures, one-click sends) goes here
-        in a later step.
+        Arrivals, departures, and one-click sends go here in a later step.
       </p>
+      <Button
+        render={<Link href="/dashboard/guests" />}
+        nativeButton={false}
+        className="w-fit"
+      >
+        Guests
+      </Button>
     </div>
   );
 }
