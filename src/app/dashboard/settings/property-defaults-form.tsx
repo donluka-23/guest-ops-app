@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import { useTranslations } from "next-intl";
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, SettingsIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,7 +22,12 @@ export function PropertyDefaultsForm({ property }: { property: Property }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t("title")}</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <div className="flex size-7 items-center justify-center rounded-lg bg-primary/15">
+            <SettingsIcon className="size-4 text-primary" />
+          </div>
+          {t("title")}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <form action={formAction} className="flex flex-wrap items-end gap-3">

@@ -90,8 +90,10 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
-        <SendIcon className="size-4 shrink-0 text-primary" />
+      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-primary/20 bg-primary/10 px-4 py-3">
+        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/15">
+          <SendIcon className="size-4 text-primary" />
+        </div>
         <span className="text-sm font-medium">{t("messagesSent", { count: sentCount ?? 0 })}</span>
         <span className="text-sm text-muted-foreground">{t("timeSaved", { hours: hoursSaved })}</span>
       </div>
@@ -99,7 +101,9 @@ export default async function DashboardPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <LogInIcon className="size-4 text-primary" />
+            <div className="flex size-7 items-center justify-center rounded-lg bg-primary/15">
+              <LogInIcon className="size-4 text-primary" />
+            </div>
             {t("arrivingToday")}
           </CardTitle>
         </CardHeader>
@@ -141,7 +145,9 @@ export default async function DashboardPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <LogOutIcon className="size-4 text-primary" />
+            <div className="flex size-7 items-center justify-center rounded-lg bg-primary/15">
+              <LogOutIcon className="size-4 text-primary" />
+            </div>
             {t("departingToday")}
           </CardTitle>
         </CardHeader>

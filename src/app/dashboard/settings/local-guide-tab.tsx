@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { CompassIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -40,7 +41,12 @@ export function LocalGuideTab({ extras }: { extras: Extra[] }) {
     <div className="flex flex-col gap-4">
       <Card>
         <CardHeader>
-          <CardTitle>{t("title")}</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-primary/15">
+              <CompassIcon className="size-4 text-primary" />
+            </div>
+            {t("title")}
+          </CardTitle>
           <CardAction>
             <Button size="sm" onClick={openAdd}>
               {t("addExtra")}

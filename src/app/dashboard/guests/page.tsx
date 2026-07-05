@@ -7,10 +7,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { verifySession } from "@/lib/supabase/dal";
 import { createClient } from "@/lib/supabase/server";
 
-const STATUS_BADGE_VARIANT = {
-  upcoming: "outline",
-  checked_in: "default",
-  checked_out: "secondary",
+// All three are filled pills (background + text color), not text-only —
+// upcoming uses the low-opacity accent chip, checked_in the solid
+// terracotta (most prominent — the "active now" status), checked_out the
+// neutral filled secondary (least prominent — "done").
+const STATUS_BADGE_CLASS = {
+  upcoming: "bg-accent text-accent-foreground",
+  checked_in: "bg-primary text-primary-foreground",
+  checked_out: "bg-secondary text-secondary-foreground",
 } as const;
 
 export default async function GuestsPage() {
@@ -56,10 +60,9 @@ export default async function GuestsPage() {
                 </p>
               </div>
               <Badge
-                variant={
-                  STATUS_BADGE_VARIANT[guest.status as keyof typeof STATUS_BADGE_VARIANT]
-                }
-                className="shrink-0"
+                className={`shrink-0 border-transparent ${
+                  STATUS_BADGE_CLASS[guest.status as keyof typeof STATUS_BADGE_CLASS]
+                }`}
               >
                 {tStatus(guest.status as "upcoming" | "checked_in" | "checked_out")}
               </Badge>

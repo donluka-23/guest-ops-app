@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { BedDoubleIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -37,7 +38,12 @@ export function RoomsTab({ property, rooms }: { property: Property; rooms: Room[
 
       <Card>
         <CardHeader>
-          <CardTitle>{t("title")}</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-primary/15">
+              <BedDoubleIcon className="size-4 text-primary" />
+            </div>
+            {t("title")}
+          </CardTitle>
           <CardAction>
             <Button size="sm" onClick={openAdd}>
               {t("addRoom")}

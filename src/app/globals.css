@@ -7,7 +7,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -55,11 +55,11 @@
      project spec. Destructive stays its own red; terracotta and red are
      adjacent warm hues but destructive needs to read unambiguously as
      "danger", not as a second brand color. */
-  --background: oklch(0.985 0.004 60);
+  --background: oklch(0.965 0.008 55);
   --foreground: oklch(0.2 0.008 50);
-  --card: oklch(0.995 0.003 60);
+  --card: oklch(1 0 0);
   --card-foreground: oklch(0.2 0.008 50);
-  --popover: oklch(0.995 0.003 60);
+  --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.2 0.008 50);
   --primary: oklch(0.62 0.19 34);
   --primary-foreground: oklch(0.99 0.005 60);

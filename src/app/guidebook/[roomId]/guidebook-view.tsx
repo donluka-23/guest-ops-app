@@ -76,7 +76,9 @@ export function GuidebookView({ data }: { data: GuidebookData }) {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
-                <WifiIcon className="size-4 text-primary" />
+                <div className="flex size-7 items-center justify-center rounded-lg bg-primary/15">
+                  <WifiIcon className="size-4 text-primary" />
+                </div>
                 WiFi
               </CardTitle>
             </CardHeader>
@@ -109,7 +111,9 @@ export function GuidebookView({ data }: { data: GuidebookData }) {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
-                <ClockIcon className="size-4 text-primary" />
+                <div className="flex size-7 items-center justify-center rounded-lg bg-primary/15">
+                  <ClockIcon className="size-4 text-primary" />
+                </div>
                 {t.checkoutTime}
               </CardTitle>
             </CardHeader>
@@ -123,7 +127,9 @@ export function GuidebookView({ data }: { data: GuidebookData }) {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
-                <NotebookTextIcon className="size-4 text-primary" />
+                <div className="flex size-7 items-center justify-center rounded-lg bg-primary/15">
+                  <NotebookTextIcon className="size-4 text-primary" />
+                </div>
                 {t.houseRules}
               </CardTitle>
             </CardHeader>
@@ -149,7 +155,9 @@ export function GuidebookView({ data }: { data: GuidebookData }) {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
-                <CompassIcon className="size-4 text-primary" />
+                <div className="flex size-7 items-center justify-center rounded-lg bg-primary/15">
+                  <CompassIcon className="size-4 text-primary" />
+                </div>
                 {t.localGuide}
               </CardTitle>
             </CardHeader>
