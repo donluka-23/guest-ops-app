@@ -6,6 +6,9 @@ import { createClient } from "@/lib/supabase/server";
 import { verifySession } from "@/lib/supabase/dal";
 import { validateGuestForm, type GuestFieldErrors } from "@/lib/guests/validation";
 
+// fieldErrors/formError values are translation keys under
+// "guests.form.errors" (see messages/*.json) — this module stays
+// i18n-agnostic and the form translates them at render time.
 export type GuestFormState =
   | { fieldErrors?: GuestFieldErrors; formError?: string }
   | undefined;
@@ -38,7 +41,7 @@ export async function createGuest(
 
   const room = await resolveOwnRoom(data.roomId);
   if (!room) {
-    return { fieldErrors: { roomId: "That room isn't available to you." } };
+    return { fieldErrors: { roomId: "roomNotAvailable" } };
   }
 
   const supabase = await createClient();
@@ -55,7 +58,7 @@ export async function createGuest(
   });
 
   if (error) {
-    return { formError: "Could not save this guest. Please try again." };
+    return { formError: "saveFailedCreate" };
   }
 
   revalidatePath("/dashboard/guests");
@@ -75,7 +78,7 @@ export async function updateGuest(
 
   const room = await resolveOwnRoom(data.roomId);
   if (!room) {
-    return { fieldErrors: { roomId: "That room isn't available to you." } };
+    return { fieldErrors: { roomId: "roomNotAvailable" } };
   }
 
   const supabase = await createClient();
@@ -95,7 +98,7 @@ export async function updateGuest(
     .eq("id", guestId);
 
   if (error) {
-    return { formError: "Could not save changes. Please try again." };
+    return { formError: "saveFailedEdit" };
   }
 
   revalidatePath("/dashboard/guests");

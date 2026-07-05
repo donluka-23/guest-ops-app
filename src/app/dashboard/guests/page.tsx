@@ -1,16 +1,14 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { verifySession } from "@/lib/supabase/dal";
 import { createClient } from "@/lib/supabase/server";
-import { STATUS_OPTIONS } from "@/lib/guests/constants";
-
-function statusLabel(value: string) {
-  return STATUS_OPTIONS.find((s) => s.value === value)?.label ?? value;
-}
 
 export default async function GuestsPage() {
   await verifySession();
   const supabase = await createClient();
+  const t = await getTranslations("guests");
+  const tStatus = await getTranslations("guestStatus");
 
   const { data: guests } = await supabase
     .from("guests")
@@ -20,16 +18,14 @@ export default async function GuestsPage() {
   return (
     <div className="flex flex-1 flex-col gap-4 p-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Guests</h1>
+        <h1 className="text-xl font-semibold">{t("title")}</h1>
         <Button render={<Link href="/dashboard/guests/new" />} nativeButton={false}>
-          Add guest
+          {t("addGuest")}
         </Button>
       </div>
 
       {!guests || guests.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
-          No guests yet. Add your first booking to get started.
-        </p>
+        <p className="text-sm text-muted-foreground">{t("empty")}</p>
       ) : (
         <div className="flex flex-col divide-y rounded-lg border">
           {guests.map((guest) => (
@@ -46,7 +42,7 @@ export default async function GuestsPage() {
                 </p>
               </div>
               <span className="text-sm text-muted-foreground">
-                {statusLabel(guest.status)}
+                {tStatus(guest.status as "upcoming" | "checked_in" | "checked_out")}
               </span>
             </Link>
           ))}

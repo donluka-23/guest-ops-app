@@ -1,0 +1,149 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "saving": "Saving..."
+  },
+  "nav": {
+    "today": "Today",
+    "guests": "Guests",
+    "settings": "Settings",
+    "logout": "Log out"
+  },
+  "login": {
+    "subtitle": "Staff sign in",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signingIn": "Signing in…",
+    "errorMissingFields": "Enter your email and password.",
+    "errorInvalidCredentials": "Incorrect email or password."
+  },
+  "dashboard": {
+    "title": "Today",
+    "signedInAs": "Signed in as {email}",
+    "placeholder": "Arrivals, departures, and one-click sends go here in a later step."
+  },
+  "guestStatus": {
+    "upcoming": "Upcoming",
+    "checked_in": "Checked in",
+    "checked_out": "Checked out"
+  },
+  "sourceChannel": {
+    "booking_com": "Booking.com",
+    "airbnb": "Airbnb",
+    "home_ge": "Home.ge",
+    "myhome_ge": "MyHome.ge",
+    "ss_ge": "SS.ge",
+    "direct": "Direct / Instagram",
+    "walk_in": "Walk-in"
+  },
+  "language": {
+    "en": "English",
+    "ru": "Russian",
+    "ka": "Georgian"
+  },
+  "guests": {
+    "title": "Guests",
+    "addGuest": "Add guest",
+    "editGuest": "Edit guest",
+    "empty": "No guests yet. Add your first booking to get started.",
+    "form": {
+      "name": "Name",
+      "phone": "Phone",
+      "room": "Room",
+      "roomPlaceholder": "Select room",
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+      "language": "Language",
+      "source": "Booking source",
+      "sourcePlaceholder": "Select source",
+      "status": "Status",
+      "submitCreate": "Add guest",
+      "submitEdit": "Save changes",
+      "saving": "Saving…",
+      "errors": {
+        "nameRequired": "Enter the guest's name.",
+        "phoneRequired": "Enter a phone number.",
+        "phoneTooShort": "Phone number looks too short.",
+        "roomRequired": "Select a room.",
+        "checkInInvalid": "Enter a valid check-in date.",
+        "checkOutInvalid": "Enter a valid check-out date.",
+        "checkOutBeforeCheckIn": "Check-out must be after check-in.",
+        "languageRequired": "Select a language.",
+        "sourceRequired": "Select a booking source.",
+        "statusRequired": "Select a status.",
+        "roomNotAvailable": "That room isn't available to you.",
+        "saveFailedCreate": "Could not save this guest. Please try again.",
+        "saveFailedEdit": "Could not save changes. Please try again."
+      }
+    }
+  },
+  "templateStage": {
+    "welcome": "Welcome",
+    "pre_arrival": "Pre-arrival",
+    "checkin_day": "Check-in day",
+    "checkout": "Checkout",
+    "review_request": "Review request"
+  },
+  "settings": {
+    "title": "Settings",
+    "noProperty": "No property found.",
+    "tabs": {
+      "rooms": "Rooms",
+      "templates": "Templates"
+    },
+    "propertyDefaults": {
+      "title": "Property defaults",
+      "defaultCheckoutTime": "Default checkout time",
+      "saved": "Saved",
+      "errors": {
+        "checkoutTimeInvalid": "Enter a valid time (HH:MM).",
+        "saveFailed": "Could not save. Please try again."
+      }
+    },
+    "rooms": {
+      "title": "Rooms",
+      "addRoom": "Add room",
+      "editRoom": "Edit room",
+      "empty": "No rooms added yet.",
+      "inheritsDefault": "Uses property default",
+      "form": {
+        "label": "Room number/label",
+        "wifiSsid": "WiFi network name",
+        "wifiPassword": "WiFi password",
+        "checkoutTime": "Checkout time",
+        "checkoutTimePlaceholder": "Leave blank to use the default",
+        "houseRules": "House rules",
+        "errors": {
+          "labelRequired": "Enter a room label.",
+          "checkoutTimeInvalid": "Enter a valid time (HH:MM).",
+          "saveFailed": "Could not save. Please try again."
+        }
+      }
+    },
+    "templates": {
+      "title": "Templates",
+      "addTemplate": "Add template",
+      "editTemplate": "Edit template",
+      "empty": "No templates added yet.",
+      "deleteConfirm": "Delete this template?",
+      "identityLocked": "Stage and language can't be changed while editing — create a new template for a different combination.",
+      "form": {
+        "stage": "Stage",
+        "stagePlaceholder": "Select stage",
+        "language": "Language",
+        "content": "Content",
+        "errors": {
+          "stageRequired": "Select a stage.",
+          "languageRequired": "Select a language.",
+          "contentRequired": "Enter the message content.",
+          "saveFailed": "Could not save. Please try again."
+        }
+      }
+    }
+  }
+}

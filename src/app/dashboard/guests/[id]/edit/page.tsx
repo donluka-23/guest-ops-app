@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { verifySession } from "@/lib/supabase/dal";
 import { createClient } from "@/lib/supabase/server";
@@ -13,6 +14,7 @@ export default async function EditGuestPage({
   await verifySession();
   const { id } = await params;
   const supabase = await createClient();
+  const t = await getTranslations("guests");
 
   // RLS scopes this to the signed-in staff member's own property; a guest
   // belonging to a property they aren't linked to simply doesn't come back
@@ -38,7 +40,7 @@ export default async function EditGuestPage({
     <div className="flex flex-1 items-start justify-center p-4">
       <Card className="w-full max-w-lg">
         <CardHeader>
-          <CardTitle>Edit guest</CardTitle>
+          <CardTitle>{t("editGuest")}</CardTitle>
         </CardHeader>
         <CardContent>
           <GuestForm

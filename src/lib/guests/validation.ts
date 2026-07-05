@@ -5,6 +5,9 @@ import {
   normalizePhone,
 } from "@/lib/guests/constants";
 
+// Error values are translation keys under the "guests.form.errors"
+// namespace (see messages/*.json), not text — this module stays
+// i18n-agnostic and the form translates them at render time.
 export type GuestFieldErrors = Partial<
   Record<
     | "name"
@@ -40,32 +43,32 @@ export function validateGuestForm(
   const errors: GuestFieldErrors = {};
 
   const name = String(formData.get("name") ?? "").trim();
-  if (!name) errors.name = "Enter the guest's name.";
+  if (!name) errors.name = "nameRequired";
 
   const phone = normalizePhone(String(formData.get("phone") ?? "")).trim();
   const phoneDigitCount = phone.replace(/\D/g, "").length;
   if (!phone) {
-    errors.phone = "Enter a phone number.";
+    errors.phone = "phoneRequired";
   } else if (phoneDigitCount < 7) {
-    errors.phone = "Phone number looks too short.";
+    errors.phone = "phoneTooShort";
   }
 
   const roomId = String(formData.get("roomId") ?? "");
-  if (!roomId) errors.roomId = "Select a room.";
+  if (!roomId) errors.roomId = "roomRequired";
 
   const checkInDate = String(formData.get("checkInDate") ?? "");
-  if (!isIsoDate(checkInDate)) errors.checkInDate = "Enter a valid check-in date.";
+  if (!isIsoDate(checkInDate)) errors.checkInDate = "checkInInvalid";
 
   const checkOutDate = String(formData.get("checkOutDate") ?? "");
   if (!isIsoDate(checkOutDate)) {
-    errors.checkOutDate = "Enter a valid check-out date.";
+    errors.checkOutDate = "checkOutInvalid";
   } else if (isIsoDate(checkInDate) && checkOutDate <= checkInDate) {
-    errors.checkOutDate = "Check-out must be after check-in.";
+    errors.checkOutDate = "checkOutBeforeCheckIn";
   }
 
   const language = String(formData.get("language") ?? "");
   if (!LANGUAGE_VALUES.includes(language as (typeof LANGUAGE_VALUES)[number])) {
-    errors.language = "Select a language.";
+    errors.language = "languageRequired";
   }
 
   const sourceChannel = String(formData.get("sourceChannel") ?? "");
@@ -74,12 +77,12 @@ export function validateGuestForm(
       sourceChannel as (typeof SOURCE_CHANNEL_VALUES)[number],
     )
   ) {
-    errors.sourceChannel = "Select a booking source.";
+    errors.sourceChannel = "sourceRequired";
   }
 
   const status = String(formData.get("status") ?? "upcoming");
   if (!STATUS_VALUES.includes(status as (typeof STATUS_VALUES)[number])) {
-    errors.status = "Select a status.";
+    errors.status = "statusRequired";
   }
 
   if (Object.keys(errors).length > 0) {

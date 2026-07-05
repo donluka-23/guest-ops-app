@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { verifySession } from "@/lib/supabase/dal";
 import { createClient } from "@/lib/supabase/server";
@@ -7,6 +8,7 @@ import { createGuest } from "../actions";
 export default async function NewGuestPage() {
   await verifySession();
   const supabase = await createClient();
+  const t = await getTranslations("guests");
 
   // RLS on `rooms` already scopes this to properties the signed-in staff
   // member belongs to — a room from another property never appears here.
@@ -19,7 +21,7 @@ export default async function NewGuestPage() {
     <div className="flex flex-1 items-start justify-center p-4">
       <Card className="w-full max-w-lg">
         <CardHeader>
-          <CardTitle>Add guest</CardTitle>
+          <CardTitle>{t("addGuest")}</CardTitle>
         </CardHeader>
         <CardContent>
           <GuestForm mode="create" rooms={rooms ?? []} action={createGuest} />

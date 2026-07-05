@@ -3,7 +3,9 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
-export type LoginState = { error: string } | undefined;
+// Returns a translation key, not text — the login form translates it at
+// render time, keeping this Server Action i18n-agnostic.
+export type LoginState = { errorKey: "missingFields" | "invalidCredentials" } | undefined;
 
 export async function login(
   _prevState: LoginState,
@@ -13,14 +15,14 @@ export async function login(
   const password = formData.get("password");
 
   if (typeof email !== "string" || typeof password !== "string" || !email || !password) {
-    return { error: "Enter your email and password." };
+    return { errorKey: "missingFields" };
   }
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    return { error: "Incorrect email or password." };
+    return { errorKey: "invalidCredentials" };
   }
 
   const next = formData.get("next");

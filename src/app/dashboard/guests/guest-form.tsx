@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,9 +13,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  LANGUAGE_OPTIONS,
-  SOURCE_CHANNEL_OPTIONS,
-  STATUS_OPTIONS,
+  LANGUAGE_VALUES,
+  SOURCE_CHANNEL_VALUES,
+  STATUS_VALUES,
   normalizePhone,
 } from "@/lib/guests/constants";
 import type { GuestFormState } from "./actions";
@@ -52,6 +53,12 @@ function addDaysISO(dateISO: string, days: number) {
 }
 
 export function GuestForm({ mode, rooms, action, initialValues }: GuestFormProps) {
+  const t = useTranslations("guests.form");
+  const tErrors = useTranslations("guests.form.errors");
+  const tLanguage = useTranslations("language");
+  const tChannel = useTranslations("sourceChannel");
+  const tStatus = useTranslations("guestStatus");
+
   const [state, formAction, pending] = useActionState<GuestFormState, FormData>(
     action,
     undefined,
@@ -88,15 +95,15 @@ export function GuestForm({ mode, rooms, action, initialValues }: GuestFormProps
   return (
     <form action={formAction} className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <Label htmlFor="name">Name</Label>
+        <Label htmlFor="name">{t("name")}</Label>
         <Input id="name" name="name" defaultValue={initialValues?.name} required />
         {errors.name && (
-          <p className="text-sm text-destructive">{errors.name}</p>
+          <p className="text-sm text-destructive">{tErrors(errors.name as never)}</p>
         )}
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="phone">Phone</Label>
+        <Label htmlFor="phone">{t("phone")}</Label>
         <Input
           id="phone"
           name="phone"
@@ -107,15 +114,15 @@ export function GuestForm({ mode, rooms, action, initialValues }: GuestFormProps
           required
         />
         {errors.phone && (
-          <p className="text-sm text-destructive">{errors.phone}</p>
+          <p className="text-sm text-destructive">{tErrors(errors.phone as never)}</p>
         )}
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="roomId">Room</Label>
+        <Label htmlFor="roomId">{t("room")}</Label>
         <Select name="roomId" defaultValue={initialValues?.roomId}>
           <SelectTrigger id="roomId" className="w-full">
-            <SelectValue placeholder="Select room" />
+            <SelectValue placeholder={t("roomPlaceholder")} />
           </SelectTrigger>
           <SelectContent>
             {rooms.map((room) => (
@@ -126,13 +133,13 @@ export function GuestForm({ mode, rooms, action, initialValues }: GuestFormProps
           </SelectContent>
         </Select>
         {errors.roomId && (
-          <p className="text-sm text-destructive">{errors.roomId}</p>
+          <p className="text-sm text-destructive">{tErrors(errors.roomId as never)}</p>
         )}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col gap-2">
-          <Label htmlFor="checkInDate">Check-in</Label>
+          <Label htmlFor="checkInDate">{t("checkIn")}</Label>
           <Input
             id="checkInDate"
             name="checkInDate"
@@ -143,11 +150,13 @@ export function GuestForm({ mode, rooms, action, initialValues }: GuestFormProps
             required
           />
           {errors.checkInDate && (
-            <p className="text-sm text-destructive">{errors.checkInDate}</p>
+            <p className="text-sm text-destructive">
+              {tErrors(errors.checkInDate as never)}
+            </p>
           )}
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="checkOutDate">Check-out</Label>
+          <Label htmlFor="checkOutDate">{t("checkOut")}</Label>
           <Input
             id="checkOutDate"
             name="checkOutDate"
@@ -161,66 +170,70 @@ export function GuestForm({ mode, rooms, action, initialValues }: GuestFormProps
             required
           />
           {errors.checkOutDate && (
-            <p className="text-sm text-destructive">{errors.checkOutDate}</p>
+            <p className="text-sm text-destructive">
+              {tErrors(errors.checkOutDate as never)}
+            </p>
           )}
         </div>
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="language">Language</Label>
+        <Label htmlFor="language">{t("language")}</Label>
         <Select name="language" defaultValue={initialValues?.language ?? "en"}>
           <SelectTrigger id="language" className="w-full">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {LANGUAGE_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
+            {LANGUAGE_VALUES.map((value) => (
+              <SelectItem key={value} value={value}>
+                {tLanguage(value)}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
         {errors.language && (
-          <p className="text-sm text-destructive">{errors.language}</p>
+          <p className="text-sm text-destructive">{tErrors(errors.language as never)}</p>
         )}
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="sourceChannel">Booking source</Label>
+        <Label htmlFor="sourceChannel">{t("source")}</Label>
         <Select name="sourceChannel" defaultValue={initialValues?.sourceChannel}>
           <SelectTrigger id="sourceChannel" className="w-full">
-            <SelectValue placeholder="Select source" />
+            <SelectValue placeholder={t("sourcePlaceholder")} />
           </SelectTrigger>
           <SelectContent>
-            {SOURCE_CHANNEL_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
+            {SOURCE_CHANNEL_VALUES.map((value) => (
+              <SelectItem key={value} value={value}>
+                {tChannel(value)}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
         {errors.sourceChannel && (
-          <p className="text-sm text-destructive">{errors.sourceChannel}</p>
+          <p className="text-sm text-destructive">
+            {tErrors(errors.sourceChannel as never)}
+          </p>
         )}
       </div>
 
       {mode === "edit" ? (
         <div className="flex flex-col gap-2">
-          <Label htmlFor="status">Status</Label>
+          <Label htmlFor="status">{t("status")}</Label>
           <Select name="status" defaultValue={initialValues?.status ?? "upcoming"}>
             <SelectTrigger id="status" className="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {STATUS_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
+              {STATUS_VALUES.map((value) => (
+                <SelectItem key={value} value={value}>
+                  {tStatus(value)}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
           {errors.status && (
-            <p className="text-sm text-destructive">{errors.status}</p>
+            <p className="text-sm text-destructive">{tErrors(errors.status as never)}</p>
           )}
         </div>
       ) : (
@@ -229,12 +242,12 @@ export function GuestForm({ mode, rooms, action, initialValues }: GuestFormProps
 
       {state?.formError && (
         <p className="text-sm text-destructive" role="alert">
-          {state.formError}
+          {tErrors(state.formError as never)}
         </p>
       )}
 
       <Button type="submit" disabled={pending} className="mt-2">
-        {pending ? "Saving…" : mode === "create" ? "Add guest" : "Save changes"}
+        {pending ? t("saving") : mode === "create" ? t("submitCreate") : t("submitEdit")}
       </Button>
     </form>
   );

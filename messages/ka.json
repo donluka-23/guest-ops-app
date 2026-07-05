@@ -1,0 +1,149 @@
+{
+  "common": {
+    "save": "შენახვა",
+    "cancel": "გაუქმება",
+    "add": "დამატება",
+    "edit": "რედაქტირება",
+    "delete": "წაშლა",
+    "saving": "ინახება..."
+  },
+  "nav": {
+    "today": "დღეს",
+    "guests": "სტუმრები",
+    "settings": "პარამეტრები",
+    "logout": "გასვლა"
+  },
+  "login": {
+    "subtitle": "პერსონალის შესვლა",
+    "email": "ელფოსტა",
+    "password": "პაროლი",
+    "signIn": "შესვლა",
+    "signingIn": "შესვლა...",
+    "errorMissingFields": "შეიყვანეთ ელფოსტა და პაროლი.",
+    "errorInvalidCredentials": "ელფოსტა ან პაროლი არასწორია."
+  },
+  "dashboard": {
+    "title": "დღეს",
+    "signedInAs": "შესული ხართ როგორც {email}",
+    "placeholder": "ჩამოსვლები, გამგზავრებები და ერთი დაწკაპუნებით გაგზავნა აქ გამოჩნდება შემდეგ ეტაპზე."
+  },
+  "guestStatus": {
+    "upcoming": "მოსალოდნელი",
+    "checked_in": "დარეგისტრირებული",
+    "checked_out": "გასული"
+  },
+  "sourceChannel": {
+    "booking_com": "Booking.com",
+    "airbnb": "Airbnb",
+    "home_ge": "Home.ge",
+    "myhome_ge": "MyHome.ge",
+    "ss_ge": "SS.ge",
+    "direct": "პირდაპირი / Instagram",
+    "walk_in": "დაუჯავშნებელი სტუმარი"
+  },
+  "language": {
+    "en": "ინგლისური",
+    "ru": "რუსული",
+    "ka": "ქართული"
+  },
+  "guests": {
+    "title": "სტუმრები",
+    "addGuest": "სტუმრის დამატება",
+    "editGuest": "სტუმრის რედაქტირება",
+    "empty": "სტუმრები ჯერ არ არის. დაამატეთ პირველი ჯავშანი დასაწყებად.",
+    "form": {
+      "name": "სახელი",
+      "phone": "ტელეფონი",
+      "room": "ოთახი",
+      "roomPlaceholder": "აირჩიეთ ოთახი",
+      "checkIn": "ჩამოსვლა",
+      "checkOut": "გამგზავრება",
+      "language": "ენა",
+      "source": "ჯავშნის წყარო",
+      "sourcePlaceholder": "აირჩიეთ წყარო",
+      "status": "სტატუსი",
+      "submitCreate": "სტუმრის დამატება",
+      "submitEdit": "ცვლილებების შენახვა",
+      "saving": "ინახება...",
+      "errors": {
+        "nameRequired": "შეიყვანეთ სტუმრის სახელი.",
+        "phoneRequired": "შეიყვანეთ ტელეფონის ნომერი.",
+        "phoneTooShort": "ტელეფონის ნომერი ძალიან მოკლეა.",
+        "roomRequired": "აირჩიეთ ოთახი.",
+        "checkInInvalid": "შეიყვანეთ ჩამოსვლის სწორი თარიღი.",
+        "checkOutInvalid": "შეიყვანეთ გამგზავრების სწორი თარიღი.",
+        "checkOutBeforeCheckIn": "გამგზავრება უნდა იყოს ჩამოსვლის შემდეგ.",
+        "languageRequired": "აირჩიეთ ენა.",
+        "sourceRequired": "აირჩიეთ ჯავშნის წყარო.",
+        "statusRequired": "აირჩიეთ სტატუსი.",
+        "roomNotAvailable": "ეს ოთახი თქვენთვის მიუწვდომელია.",
+        "saveFailedCreate": "სტუმრის შენახვა ვერ მოხერხდა. სცადეთ ხელახლა.",
+        "saveFailedEdit": "ცვლილებების შენახვა ვერ მოხერხდა. სცადეთ ხელახლა."
+      }
+    }
+  },
+  "templateStage": {
+    "welcome": "მისალმება",
+    "pre_arrival": "ჩამოსვლის წინ",
+    "checkin_day": "ჩამოსვლის დღეს",
+    "checkout": "გასვლა",
+    "review_request": "შეფასების თხოვნა"
+  },
+  "settings": {
+    "title": "პარამეტრები",
+    "noProperty": "ობიექტი ვერ მოიძებნა.",
+    "tabs": {
+      "rooms": "ოთახები",
+      "templates": "შაბლონები"
+    },
+    "propertyDefaults": {
+      "title": "საერთო პარამეტრები",
+      "defaultCheckoutTime": "გასვლის დრო (ნაგულისხმევი)",
+      "saved": "შენახულია",
+      "errors": {
+        "checkoutTimeInvalid": "შეიყვანეთ სწორი დრო (სთ:წთ).",
+        "saveFailed": "ვერ მოხერხდა შენახვა. სცადეთ ხელახლა."
+      }
+    },
+    "rooms": {
+      "title": "ოთახები",
+      "addRoom": "ოთახის დამატება",
+      "editRoom": "ოთახის რედაქტირება",
+      "empty": "ოთახები ჯერ არ არის დამატებული.",
+      "inheritsDefault": "ნაგულისხმევი გამოიყენება",
+      "form": {
+        "label": "ოთახის ნომერი/სახელი",
+        "wifiSsid": "WiFi ქსელის სახელი",
+        "wifiPassword": "WiFi პაროლი",
+        "checkoutTime": "გასვლის დრო",
+        "checkoutTimePlaceholder": "ნაგულისხმევის გამოსაყენებლად ცარიელი დატოვეთ",
+        "houseRules": "სახლის წესები",
+        "errors": {
+          "labelRequired": "შეიყვანეთ ოთახის სახელი.",
+          "checkoutTimeInvalid": "შეიყვანეთ სწორი დრო (სთ:წთ).",
+          "saveFailed": "ვერ მოხერხდა შენახვა. სცადეთ ხელახლა."
+        }
+      }
+    },
+    "templates": {
+      "title": "შაბლონები",
+      "addTemplate": "შაბლონის დამატება",
+      "editTemplate": "შაბლონის რედაქტირება",
+      "empty": "შაბლონები ჯერ არ არის დამატებული.",
+      "deleteConfirm": "წავშალო ეს შაბლონი?",
+      "identityLocked": "ეტაპისა და ენის შეცვლა შეუძლებელია რედაქტირებისას — შექმენით ახალი შაბლონი სხვა კომბინაციისთვის.",
+      "form": {
+        "stage": "ეტაპი",
+        "stagePlaceholder": "აირჩიეთ ეტაპი",
+        "language": "ენა",
+        "content": "ტექსტი",
+        "errors": {
+          "stageRequired": "აირჩიეთ ეტაპი.",
+          "languageRequired": "აირჩიეთ ენა.",
+          "contentRequired": "შეიყვანეთ ტექსტი.",
+          "saveFailed": "ვერ მოხერხდა შენახვა. სცადეთ ხელახლა."
+        }
+      }
+    }
+  }
+}
