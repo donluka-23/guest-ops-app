@@ -120,7 +120,11 @@ export function GuestForm({ mode, rooms, action, initialValues }: GuestFormProps
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="roomId">{t("room")}</Label>
-        <Select name="roomId" defaultValue={initialValues?.roomId}>
+        <Select
+          name="roomId"
+          defaultValue={initialValues?.roomId}
+          items={Object.fromEntries(rooms.map((room) => [room.id, room.label]))}
+        >
           <SelectTrigger id="roomId" className="w-full">
             <SelectValue placeholder={t("roomPlaceholder")} />
           </SelectTrigger>
@@ -179,7 +183,11 @@ export function GuestForm({ mode, rooms, action, initialValues }: GuestFormProps
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="language">{t("language")}</Label>
-        <Select name="language" defaultValue={initialValues?.language ?? "en"}>
+        <Select
+          name="language"
+          defaultValue={initialValues?.language ?? "en"}
+          items={Object.fromEntries(LANGUAGE_VALUES.map((value) => [value, tLanguage(value)]))}
+        >
           <SelectTrigger id="language" className="w-full">
             <SelectValue />
           </SelectTrigger>
@@ -198,7 +206,11 @@ export function GuestForm({ mode, rooms, action, initialValues }: GuestFormProps
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="sourceChannel">{t("source")}</Label>
-        <Select name="sourceChannel" defaultValue={initialValues?.sourceChannel}>
+        <Select
+          name="sourceChannel"
+          defaultValue={initialValues?.sourceChannel}
+          items={Object.fromEntries(SOURCE_CHANNEL_VALUES.map((value) => [value, tChannel(value)]))}
+        >
           <SelectTrigger id="sourceChannel" className="w-full">
             <SelectValue placeholder={t("sourcePlaceholder")} />
           </SelectTrigger>
@@ -220,7 +232,11 @@ export function GuestForm({ mode, rooms, action, initialValues }: GuestFormProps
       {mode === "edit" ? (
         <div className="flex flex-col gap-2">
           <Label htmlFor="status">{t("status")}</Label>
-          <Select name="status" defaultValue={initialValues?.status ?? "upcoming"}>
+          <Select
+            name="status"
+            defaultValue={initialValues?.status ?? "upcoming"}
+            items={Object.fromEntries(STATUS_VALUES.map((value) => [value, tStatus(value)]))}
+          >
             <SelectTrigger id="status" className="w-full">
               <SelectValue />
             </SelectTrigger>

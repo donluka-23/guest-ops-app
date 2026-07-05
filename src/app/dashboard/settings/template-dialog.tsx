@@ -111,7 +111,10 @@ export function TemplateDialog({ template, open, onOpenChange }: TemplateDialogP
                   <input type="hidden" name="stage" value={template.stage} />
                 </>
               ) : (
-                <Select name="stage">
+                <Select
+                  name="stage"
+                  items={Object.fromEntries(TEMPLATE_STAGE_VALUES.map((value) => [value, tStage(value)]))}
+                >
                   <SelectTrigger id="stage" className="w-full">
                     <SelectValue placeholder={tForm("stagePlaceholder")} />
                   </SelectTrigger>
@@ -138,7 +141,11 @@ export function TemplateDialog({ template, open, onOpenChange }: TemplateDialogP
                   <input type="hidden" name="language" value={template.language} />
                 </>
               ) : (
-                <Select name="language" defaultValue="ka">
+                <Select
+                  name="language"
+                  defaultValue="ka"
+                  items={Object.fromEntries(TEMPLATE_LANGUAGE_VALUES.map((value) => [value, tLanguage(value)]))}
+                >
                   <SelectTrigger id="language" className="w-full">
                     <SelectValue />
                   </SelectTrigger>

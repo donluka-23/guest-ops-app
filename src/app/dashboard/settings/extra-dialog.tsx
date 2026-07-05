@@ -85,7 +85,10 @@ export function ExtraDialog({ extra, open, onOpenChange }: ExtraDialogProps) {
                 <input type="hidden" name="category" value={extra.category} />
               </>
             ) : (
-              <Select name="category">
+              <Select
+                name="category"
+                items={Object.fromEntries(EXTRA_CATEGORY_VALUES.map((value) => [value, tCategory(value)]))}
+              >
                 <SelectTrigger id="category" className="w-full">
                   <SelectValue placeholder={tForm("categoryPlaceholder")} />
                 </SelectTrigger>

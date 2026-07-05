@@ -25,7 +25,17 @@
   "dashboard": {
     "title": "დღეს",
     "signedInAs": "შესული ხართ როგორც {email}",
-    "placeholder": "ჩამოსვლები, გამგზავრებები და ერთი დაწკაპუნებით გაგზავნა აქ გამოჩნდება შემდეგ ეტაპზე."
+    "arrivingToday": "დღეს ჩამოდიან",
+    "departingToday": "დღეს მიემგზავრებიან",
+    "noArrivals": "დღეს ჩამოსვლები არ არის.",
+    "noDepartures": "დღეს გამგზავრებები არ არის.",
+    "sendCheckinInfo": "ჩამოსვლის ინფოს გაგზავნა",
+    "sendCheckoutReminder": "გასვლის შეხსენების გაგზავნა",
+    "sendReviewRequest": "შეფასების თხოვნის გაგზავნა",
+    "sent": "გაგზავნილია",
+    "noTemplate": "შაბლონი არ არის დამატებული",
+    "messagesSent": "გაგზავნილია {count} შეტყობინება",
+    "timeSaved": "დაზოგილია დაახლოებით {hours} საათი"
   },
   "guestStatus": {
     "upcoming": "მოსალოდნელი",

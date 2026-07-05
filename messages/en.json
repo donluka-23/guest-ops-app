@@ -25,7 +25,17 @@
   "dashboard": {
     "title": "Today",
     "signedInAs": "Signed in as {email}",
-    "placeholder": "Arrivals, departures, and one-click sends go here in a later step."
+    "arrivingToday": "Arriving today",
+    "departingToday": "Departing today",
+    "noArrivals": "No arrivals today.",
+    "noDepartures": "No departures today.",
+    "sendCheckinInfo": "Send check-in info",
+    "sendCheckoutReminder": "Send checkout reminder",
+    "sendReviewRequest": "Send review request",
+    "sent": "Sent",
+    "noTemplate": "No template added",
+    "messagesSent": "{count, plural, one {# message sent} other {# messages sent}}",
+    "timeSaved": "~{hours} hours saved"
   },
   "guestStatus": {
     "upcoming": "Upcoming",

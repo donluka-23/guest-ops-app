@@ -21,6 +21,7 @@ export function LocaleSwitcher({ currentLocale }: { currentLocale: Locale }) {
         if (value) startTransition(() => setLocale(value));
       }}
       disabled={pending}
+      items={LOCALE_LABELS}
     >
       <SelectTrigger aria-label="Language" className="w-fit">
         <SelectValue />
