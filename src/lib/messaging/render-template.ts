@@ -17,3 +17,20 @@ export function renderTemplate(content: string, vars: Partial<TemplateVars>): st
     return vars[token as keyof TemplateVars] ?? "";
   });
 }
+
+export type TemplateRow = { id: string; stage: string; language: string; content: string };
+
+// Picks the template matching the guest's own language for a stage,
+// falling back to the `en` variant if that language's version doesn't
+// exist — see the Today dashboard decisions log entry for why (rather
+// than erroring, callers render a disabled "no template" button instead).
+export function templateFor(
+  templates: TemplateRow[],
+  stage: string,
+  language: string,
+): { id: string; content: string } | null {
+  const exact = templates.find((t) => t.stage === stage && t.language === language);
+  if (exact) return exact;
+  const fallback = templates.find((t) => t.stage === stage && t.language === "en");
+  return fallback ?? null;
+}

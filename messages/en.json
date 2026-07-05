@@ -70,6 +70,12 @@
     "addGuest": "Add guest",
     "editGuest": "Edit guest",
     "empty": "No guests yet. Add your first booking to get started.",
+    "messaging": {
+      "title": "Send a message",
+      "sendWelcome": "Send welcome message",
+      "sendPreArrival": "Send pre-arrival info",
+      "sendMidStay": "Send mid-stay check-in"
+    },
     "form": {
       "name": "Name",
       "phone": "Phone",

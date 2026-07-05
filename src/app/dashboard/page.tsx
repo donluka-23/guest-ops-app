@@ -7,7 +7,7 @@ import { verifySession } from "@/lib/supabase/dal";
 import { createClient } from "@/lib/supabase/server";
 import { getOwnProperty } from "@/lib/property/current";
 import { addDaysToISO, todayInBatumiISO } from "@/lib/dates";
-import { renderTemplate } from "@/lib/messaging/render-template";
+import { renderTemplate, templateFor, type TemplateRow } from "@/lib/messaging/render-template";
 import { SendButton } from "./send-button";
 
 const WEEK_LENGTH_DAYS = 7;
@@ -29,21 +29,11 @@ type Guest = {
   rooms: Room | null;
 };
 
-type TemplateRow = { id: string; stage: string; language: string; content: string };
-type Template = { id: string; content: string };
-
 type Labels = {
   sendCheckinInfo: string;
   sendCheckoutReminder: string;
   sendReviewRequest: string;
 };
-
-function templateFor(templates: TemplateRow[], stage: string, language: string): Template | null {
-  const exact = templates.find((t) => t.stage === stage && t.language === language);
-  if (exact) return exact;
-  const fallback = templates.find((t) => t.stage === stage && t.language === "en");
-  return fallback ?? null;
-}
 
 function guestVars(guest: Guest, defaultCheckoutTime: string) {
   const room = guest.rooms as unknown as Room | null;
