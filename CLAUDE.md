@@ -14,26 +14,32 @@ A guest-communication and operations tool for a small aparthotel (10+ rooms) in 
 
 ## Data model (update this section whenever schema changes — schema, not aspiration)
 
-Not yet implemented. Planned (per project spec):
+Implemented in `supabase/migrations/20260705072542_initial_schema.sql`:
 
-- `properties` — one row per aparthotel
-- `rooms` — belongs to a property; room number, WiFi credentials, checkout time, house rules notes (guidebook content source)
-- `guests` — belongs to a room; name, phone, check-in date, check-out date, language, source channel (`booking_com` / `airbnb` / `home_ge` / `myhome_ge` / `ss_ge` / `direct` / `walk_in`), status
-- `message_templates` — belongs to a property; stage (`welcome` / `pre_arrival` / `checkin_day` / `checkout` / `review_request`), language, content — editable by host
-- `message_log` — one row per send; guest id, template used, timestamp, sent-by user — audit trail and real source for "time saved" / "messages sent" stats (never fake these client-side)
+- `properties` — id, name, address, created_at. One row per aparthotel.
+- `property_staff` *(new — not in original spec)* — id, property_id, user_id (→ `auth.users`), role (`owner`/`staff`), created_at. Join table driving all RLS scoping; added so policies check membership rows instead of a hardcoded property id.
+- `rooms` — id (uuid, also doubles as the unguessable public guidebook link token), property_id, label, wifi_ssid, wifi_password, checkout_time, house_rules, map_url, created_at, updated_at.
+- `guests` — id, property_id (denormalized for RLS), room_id, name, phone, check_in_date, check_out_date, language (`en`/`ru`/`ka`), source_channel (`booking_com`/`airbnb`/`home_ge`/`myhome_ge`/`ss_ge`/`direct`/`walk_in`), status (`upcoming`/`checked_in`/`checked_out`), created_at, updated_at.
+- `message_templates` — id, property_id, stage (`welcome`/`pre_arrival`/`checkin_day`/`checkout`/`review_request`), language, content, created_at, updated_at.
+- `message_log` — id, property_id, guest_id, template_id (nullable, `on delete set null`), sent_by (→ `auth.users`), sent_at. Append-only: insert/select policies only, no update/delete for any role (see decisions log).
+
+Enum-like fields (`language`, `source_channel`, `status`, `stage`) use `text` + `CHECK` constraints rather than Postgres `enum` types — cheaper to loosen later (`ALTER TABLE ... DROP/ADD CONSTRAINT`) than `ALTER TYPE`.
 
 ## Security architecture
 
 Two distinct access zones:
 
-1. **Authenticated zone** — dashboard, add/edit guest, template editor, room settings. Requires login. Protected by Supabase row-level security scoped to the property.
-2. **Public zone** — guest-facing guidebook page, one per room. No login, but must not leak other guests'/properties' data. RLS policies and route structure must structurally enforce this separation, not just hide it in the UI.
+1. **Authenticated zone** — dashboard, add/edit guest, template editor, room settings. Requires login. Every table has RLS enabled with no public policies; access is staff-only via the `is_staff_of(property_id)` SQL helper (`SECURITY DEFINER`, reused by every table's policies so new tables just call the same helper). `is_staff_of` checks `property_staff` membership for `auth.uid()`.
+2. **Public zone** — guest-facing guidebook page, one per room, no login. There is **no public RLS policy on any table** — `rooms` (which holds WiFi/house rules/checkout time) is fully locked. The only public surface is `get_room_guidebook(room_id uuid)`, a `SECURITY DEFINER` function granted `EXECUTE` to `anon`, returning just the guidebook-safe columns for one room. This makes the split structural rather than UI-hidden: new columns added to `rooms` later are private by default and only become guest-visible if deliberately added to that function's return list. `get_room_guidebook` is not gated by guest stay dates (see decisions log) — it's evergreen per-room content, not guest-specific.
+
+**Bootstrapping a new property:** every insert (including into `property_staff`) requires the inserter to already be staff, so the first property row and first `property_staff` row must be created manually via the Supabase SQL editor (runs as `postgres`, bypasses RLS) or the service-role key — a deliberate one-time step per property, not an in-app flow. No signup/invite UI is built.
 
 Guest names/phone numbers are real PII from real bookings: no PII logging to console/analytics, no secrets committed, `.env.local` gitignored from commit one.
 
 ## Decisions log
 
 - 2026-07-05: Project initialized. Using plain `wa.me` deep links for WhatsApp (no Business API/bot/template approval). No OTA API booking import (none of the channels grant small-property API access) — front desk manual entry is the only intake path, by design.
+- 2026-07-05: Schema/RLS design decisions (see `supabase/migrations/20260705072542_initial_schema.sql`): (a) `message_log` is append-only — insert/select policies only, no update/delete for any role, because it's the audit trail behind "messages sent"/"time saved" stats and a mutable log isn't an audit trail; a mis-logged send gets a corrective new row, not an edit. (b) `property_staff` (and every other insert) requires the inserter to already be staff, so the first staff row for a new property can't come through the app — it's inserted once, manually, via the Supabase SQL editor (runs as `postgres`, bypasses RLS) or the service-role key, as a deliberate one-time bootstrap step, not a gap. No signup/invite flow is built. (c) `get_room_guidebook(room_id)` returns content indefinitely, not gated by any guest's stay dates — the guidebook describes the room (WiFi, house rules, checkout time, map), not a specific guest, carries no guest PII, and every future guest of that room needs the same content, so date-gating would add complexity without reducing real exposure. Revisit this if guest-specific content is ever added to the guidebook.
 - 2026-07-05: Step 1 complete. GitHub repo: [donluka-23/guest-ops-app](https://github.com/donluka-23/guest-ops-app) (branch `main`). Supabase project connected (URL/anon key in `.env.local`, gitignored; `.env.local.example` documents the required vars — note `.gitignore` uses `.env*` with a `!.env*.example` exception, so new example files must follow that naming). Vercel import deferred — user will connect the GitHub repo via the Vercel dashboard themselves when ready (not yet done as of this entry).
 
 ## Explicitly out of scope (do not build, do not scaffold placeholders for)
