@@ -40,7 +40,27 @@ Guest names/phone numbers are real PII from real bookings: no PII logging to con
 
 - 2026-07-05: Project initialized. Using plain `wa.me` deep links for WhatsApp (no Business API/bot/template approval). No OTA API booking import (none of the channels grant small-property API access) — front desk manual entry is the only intake path, by design.
 - 2026-07-05: Schema/RLS design decisions (see `supabase/migrations/20260705072542_initial_schema.sql`): (a) `message_log` is append-only — insert/select policies only, no update/delete for any role, because it's the audit trail behind "messages sent"/"time saved" stats and a mutable log isn't an audit trail; a mis-logged send gets a corrective new row, not an edit. (b) `property_staff` (and every other insert) requires the inserter to already be staff, so the first staff row for a new property can't come through the app — it's inserted once, manually, via the Supabase SQL editor (runs as `postgres`, bypasses RLS) or the service-role key, as a deliberate one-time bootstrap step, not a gap. No signup/invite flow is built. (c) `get_room_guidebook(room_id)` returns content indefinitely, not gated by any guest's stay dates — the guidebook describes the room (WiFi, house rules, checkout time, map), not a specific guest, carries no guest PII, and every future guest of that room needs the same content, so date-gating would add complexity without reducing real exposure. Revisit this if guest-specific content is ever added to the guidebook.
+- 2026-07-05: Bootstrapped the first real property (ORBI City) and its first staff row via `supabase db query --linked` (not the app, not a tracked migration — one-time data, see "Manual setup" section below). Assigned role `owner` rather than `staff` since this person holds the account and is the sole staff member; the two roles behave identically under `is_staff_of()` today but the distinction is preserved for when hired staff are added later.
 - 2026-07-05: Step 1 complete. GitHub repo: [donluka-23/guest-ops-app](https://github.com/donluka-23/guest-ops-app) (branch `main`). Supabase project connected (URL/anon key in `.env.local`, gitignored; `.env.local.example` documents the required vars — note `.gitignore` uses `.env*` with a `!.env*.example` exception, so new example files must follow that naming). Vercel import deferred — user will connect the GitHub repo via the Vercel dashboard themselves when ready (not yet done as of this entry).
+
+## Manual setup: bootstrapping a new property
+
+Every insert policy (including on `property_staff`) requires the inserter to already be staff of that property, so the first property + first staff row cannot be created through the app. Process (one-time, per property, done via `supabase db query --linked`, which runs as `postgres` and bypasses RLS — equivalent to using the Supabase SQL editor):
+
+```sql
+with new_property as (
+  insert into public.properties (name, address)
+  values ('<name>', '<address>')
+  returning id
+)
+insert into public.property_staff (property_id, user_id, role)
+select id, '<auth.users UID>'::uuid, 'owner'
+from new_property;
+```
+
+Use role `'owner'` for the person who holds the account and is the first/primary staff member (see decisions log for why `owner` vs `staff` matters later even though both pass `is_staff_of()` identically today). Adding a second staff member later is just `insert into property_staff (property_id, user_id, role) values (...)` with the existing property's id and role `'staff'`.
+
+**ORBI City bootstrap (done 2026-07-05):** `properties.id = 501e3495-aa15-40f2-b60e-08f071cb22bc`, name "ORBI City", address "Khimshiashvili 9a, Batumi". `property_staff` row links `user_id = 35cbb6f1-5a59-4f1b-a5ca-c3013ffa22a8` with role `owner`. Confirmed via a join query before proceeding to step 3.
 
 ## Explicitly out of scope (do not build, do not scaffold placeholders for)
 
