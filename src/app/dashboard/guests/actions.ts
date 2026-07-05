@@ -55,6 +55,7 @@ export async function createGuest(
     language: data.language,
     source_channel: data.sourceChannel,
     status: data.status,
+    notes: data.notes || null,
   });
 
   if (error) {
@@ -94,6 +95,7 @@ export async function updateGuest(
       language: data.language,
       source_channel: data.sourceChannel,
       status: data.status,
+      notes: data.notes || null,
     })
     .eq("id", guestId);
 

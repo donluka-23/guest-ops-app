@@ -31,6 +31,7 @@ export type GuestFormValues = {
   language: string;
   sourceChannel: string;
   status: string;
+  notes: string;
 };
 
 function isIsoDate(value: string) {
@@ -85,6 +86,8 @@ export function validateGuestForm(
     errors.status = "statusRequired";
   }
 
+  const notes = String(formData.get("notes") ?? "").trim();
+
   if (Object.keys(errors).length > 0) {
     return { fieldErrors: errors };
   }
@@ -99,6 +102,7 @@ export function validateGuestForm(
       language,
       sourceChannel,
       status,
+      notes,
     },
   };
 }

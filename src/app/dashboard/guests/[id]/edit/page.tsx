@@ -31,7 +31,7 @@ export default async function EditGuestPage({
     supabase
       .from("guests")
       .select(
-        "id, name, phone, room_id, check_in_date, check_out_date, language, source_channel, status, rooms(label, wifi_ssid, wifi_password, checkout_time)",
+        "id, name, phone, room_id, check_in_date, check_out_date, language, source_channel, status, notes, rooms(label, wifi_ssid, wifi_password, checkout_time)",
       )
       .eq("id", id)
       .maybeSingle(),
@@ -89,6 +89,7 @@ export default async function EditGuestPage({
               language: guest.language,
               sourceChannel: guest.source_channel,
               status: guest.status,
+              notes: guest.notes ?? "",
             }}
           />
         </CardContent>

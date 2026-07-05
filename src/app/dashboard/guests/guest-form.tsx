@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -31,6 +32,7 @@ export type GuestFormValues = {
   language: string;
   sourceChannel: string;
   status: string;
+  notes?: string;
 };
 
 type GuestFormProps = {
@@ -255,6 +257,17 @@ export function GuestForm({ mode, rooms, action, initialValues }: GuestFormProps
       ) : (
         <input type="hidden" name="status" value="upcoming" />
       )}
+
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="notes">{t("notes")}</Label>
+        <Textarea
+          id="notes"
+          name="notes"
+          rows={3}
+          defaultValue={initialValues?.notes}
+          placeholder={t("notesPlaceholder")}
+        />
+      </div>
 
       {state?.formError && (
         <p className="text-sm text-destructive" role="alert">

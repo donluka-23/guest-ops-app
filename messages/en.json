@@ -87,6 +87,8 @@
       "source": "Booking source",
       "sourcePlaceholder": "Select source",
       "status": "Status",
+      "notes": "Notes",
+      "notesPlaceholder": "Shift handoff notes, quirks, special requests…",
       "submitCreate": "Add guest",
       "submitEdit": "Save changes",
       "saving": "Saving…",
