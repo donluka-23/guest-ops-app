@@ -5,6 +5,7 @@ export const TEMPLATE_STAGE_VALUES = [
   "welcome",
   "pre_arrival",
   "checkin_day",
+  "mid_stay",
   "checkout",
   "review_request",
 ] as const;
