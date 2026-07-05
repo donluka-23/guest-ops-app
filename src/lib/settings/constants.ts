@@ -28,3 +28,5 @@ function isValidTimeString(value: string) {
 }
 
 export { isValidTimeString };
+
+export const EXTRA_CATEGORY_VALUES = ["recommendation", "taxi", "offering"] as const;

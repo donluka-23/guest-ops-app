@@ -7,8 +7,10 @@ import { getOwnProperty } from "@/lib/property/current";
 import {
   validateRoomForm,
   validateTemplateForm,
+  validateExtraForm,
   type RoomFieldErrors,
   type TemplateFieldErrors,
+  type ExtraFieldErrors,
 } from "@/lib/settings/validation";
 import { isValidTimeString } from "@/lib/settings/constants";
 
@@ -139,5 +141,55 @@ export async function deleteTemplate(templateId: string) {
   await verifySession();
   const supabase = await createClient();
   await supabase.from("message_templates").delete().eq("id", templateId);
+  revalidatePath("/dashboard/settings");
+}
+
+export type ExtraFormState =
+  | { fieldErrors?: ExtraFieldErrors; formError?: string; success?: boolean }
+  | undefined;
+
+export async function upsertExtra(
+  _prevState: ExtraFormState,
+  formData: FormData,
+): Promise<ExtraFormState> {
+  await verifySession();
+
+  const result = validateExtraForm(formData);
+  if ("fieldErrors" in result) return { fieldErrors: result.fieldErrors };
+  const { data } = result;
+
+  const extraId = String(formData.get("id") ?? "").trim();
+  const supabase = await createClient();
+
+  const payload = {
+    category: data.category,
+    title: data.title,
+    description: data.description || null,
+    contact_info: data.contactInfo || null,
+    price: data.price || null,
+    display_order: data.displayOrder,
+  };
+
+  if (extraId) {
+    const { error } = await supabase.from("property_extras").update(payload).eq("id", extraId);
+    if (error) return { formError: "saveFailed" };
+  } else {
+    const property = await getOwnProperty();
+    if (!property) return { formError: "saveFailed" };
+
+    const { error } = await supabase
+      .from("property_extras")
+      .insert({ ...payload, property_id: property.id });
+    if (error) return { formError: "saveFailed" };
+  }
+
+  revalidatePath("/dashboard/settings");
+  return { success: true };
+}
+
+export async function deleteExtra(extraId: string) {
+  await verifySession();
+  const supabase = await createClient();
+  await supabase.from("property_extras").delete().eq("id", extraId);
   revalidatePath("/dashboard/settings");
 }

@@ -1,6 +1,7 @@
 import {
   TEMPLATE_STAGE_VALUES,
   TEMPLATE_LANGUAGE_VALUES,
+  EXTRA_CATEGORY_VALUES,
   isValidTimeString,
 } from "@/lib/settings/constants";
 
@@ -85,4 +86,50 @@ export function validateTemplateForm(
   }
 
   return { data: { stage, language, content } };
+}
+
+export type ExtraFieldErrors = Partial<Record<"category" | "title" | "displayOrder", string>>;
+
+export type ExtraFormValues = {
+  category: string;
+  title: string;
+  description: string;
+  contactInfo: string;
+  price: string;
+  displayOrder: number;
+};
+
+export function validateExtraForm(
+  formData: FormData,
+): { data: ExtraFormValues } | { fieldErrors: ExtraFieldErrors } {
+  const errors: ExtraFieldErrors = {};
+
+  const category = String(formData.get("category") ?? "");
+  if (!EXTRA_CATEGORY_VALUES.includes(category as (typeof EXTRA_CATEGORY_VALUES)[number])) {
+    errors.category = "categoryRequired";
+  }
+
+  const title = String(formData.get("title") ?? "").trim();
+  if (!title) errors.title = "titleRequired";
+
+  const rawDisplayOrder = String(formData.get("displayOrder") ?? "0").trim();
+  const displayOrder = Number.parseInt(rawDisplayOrder, 10);
+  if (rawDisplayOrder && Number.isNaN(displayOrder)) {
+    errors.displayOrder = "displayOrderInvalid";
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return { fieldErrors: errors };
+  }
+
+  return {
+    data: {
+      category,
+      title,
+      description: String(formData.get("description") ?? "").trim(),
+      contactInfo: String(formData.get("contactInfo") ?? "").trim(),
+      price: String(formData.get("price") ?? "").trim(),
+      displayOrder: Number.isNaN(displayOrder) ? 0 : displayOrder,
+    },
+  };
 }

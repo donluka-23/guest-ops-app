@@ -94,7 +94,8 @@
     "noProperty": "No property found.",
     "tabs": {
       "rooms": "Rooms",
-      "templates": "Templates"
+      "templates": "Templates",
+      "localGuide": "Local guide"
     },
     "propertyDefaults": {
       "title": "Property defaults",
@@ -144,6 +145,35 @@
           "saveFailed": "Could not save. Please try again."
         }
       }
+    },
+    "localGuide": {
+      "title": "Local guide",
+      "addExtra": "Add entry",
+      "editExtra": "Edit entry",
+      "empty": "No entries added yet.",
+      "deleteConfirm": "Delete this entry?",
+      "identityLocked": "Category can't be changed while editing — create a new entry for a different category.",
+      "form": {
+        "category": "Category",
+        "categoryPlaceholder": "Select category",
+        "title": "Title",
+        "description": "Description",
+        "contactInfo": "Contact info",
+        "price": "Price",
+        "pricePlaceholder": "e.g. from 25 GEL",
+        "displayOrder": "Display order",
+        "errors": {
+          "categoryRequired": "Select a category.",
+          "titleRequired": "Enter a title.",
+          "displayOrderInvalid": "Enter a valid number.",
+          "saveFailed": "Could not save. Please try again."
+        }
+      }
     }
+  },
+  "extraCategory": {
+    "recommendation": "Recommendations",
+    "taxi": "Taxi",
+    "offering": "Offerings"
   }
 }

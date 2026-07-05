@@ -94,7 +94,8 @@
     "noProperty": "ობიექტი ვერ მოიძებნა.",
     "tabs": {
       "rooms": "ოთახები",
-      "templates": "შაბლონები"
+      "templates": "შაბლონები",
+      "localGuide": "ადგილობრივი გზამკვლევი"
     },
     "propertyDefaults": {
       "title": "საერთო პარამეტრები",
@@ -144,6 +145,35 @@
           "saveFailed": "ვერ მოხერხდა შენახვა. სცადეთ ხელახლა."
         }
       }
+    },
+    "localGuide": {
+      "title": "ადგილობრივი გზამკვლევი",
+      "addExtra": "ჩანაწერის დამატება",
+      "editExtra": "ჩანაწერის რედაქტირება",
+      "empty": "ჩანაწერები ჯერ არ არის დამატებული.",
+      "deleteConfirm": "წავშალო ეს ჩანაწერი?",
+      "identityLocked": "კატეგორიის შეცვლა შეუძლებელია რედაქტირებისას — შექმენით ახალი ჩანაწერი სხვა კატეგორიისთვის.",
+      "form": {
+        "category": "კატეგორია",
+        "categoryPlaceholder": "აირჩიეთ კატეგორია",
+        "title": "სათაური",
+        "description": "აღწერა",
+        "contactInfo": "საკონტაქტო ინფორმაცია",
+        "price": "ფასი",
+        "pricePlaceholder": "მაგ. 25 ლარიდან",
+        "displayOrder": "თანმიმდევრობა",
+        "errors": {
+          "categoryRequired": "აირჩიეთ კატეგორია.",
+          "titleRequired": "შეიყვანეთ სათაური.",
+          "displayOrderInvalid": "შეიყვანეთ სწორი რიცხვი.",
+          "saveFailed": "ვერ მოხერხდა შენახვა. სცადეთ ხელახლა."
+        }
+      }
     }
+  },
+  "extraCategory": {
+    "recommendation": "რეკომენდაციები",
+    "taxi": "ტაქსი",
+    "offering": "შეთავაზებები"
   }
 }
