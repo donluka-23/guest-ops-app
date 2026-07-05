@@ -25,10 +25,19 @@
   "dashboard": {
     "title": "დღეს",
     "signedInAs": "შესული ხართ როგორც {email}",
+    "tabs": {
+      "today": "დღეს",
+      "thisWeek": "ამ კვირას"
+    },
     "arrivingToday": "დღეს ჩამოდიან",
     "departingToday": "დღეს მიემგზავრებიან",
+    "arrivingThisWeek": "ამ კვირას ჩამოდიან",
+    "departingThisWeek": "ამ კვირას მიემგზავრებიან",
+    "todayLabel": "დღეს",
     "noArrivals": "დღეს ჩამოსვლები არ არის.",
     "noDepartures": "დღეს გამგზავრებები არ არის.",
+    "noArrivalsWeek": "ამ კვირას ჩამოსვლები არ არის.",
+    "noDeparturesWeek": "ამ კვირას გამგზავრებები არ არის.",
     "sendCheckinInfo": "ჩამოსვლის ინფოს გაგზავნა",
     "sendCheckoutReminder": "გასვლის შეხსენების გაგზავნა",
     "sendReviewRequest": "შეფასების თხოვნის გაგზავნა",

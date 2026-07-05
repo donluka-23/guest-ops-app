@@ -9,3 +9,12 @@ export function todayInBatumiISO(): string {
   const batumiNow = new Date(now.getTime() + BATUMI_UTC_OFFSET_HOURS * 60 * 60 * 1000);
   return batumiNow.toISOString().slice(0, 10);
 }
+
+// Pure calendar-day arithmetic — safe to run with any local clock (server
+// or browser) since it never reads the current time, only offsets a given
+// ISO date.
+export function addDaysToISO(dateISO: string, days: number): string {
+  const date = new Date(`${dateISO}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+}

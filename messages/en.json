@@ -25,10 +25,19 @@
   "dashboard": {
     "title": "Today",
     "signedInAs": "Signed in as {email}",
+    "tabs": {
+      "today": "Today",
+      "thisWeek": "This week"
+    },
     "arrivingToday": "Arriving today",
     "departingToday": "Departing today",
+    "arrivingThisWeek": "Arriving this week",
+    "departingThisWeek": "Departing this week",
+    "todayLabel": "Today",
     "noArrivals": "No arrivals today.",
     "noDepartures": "No departures today.",
+    "noArrivalsWeek": "No arrivals this week.",
+    "noDeparturesWeek": "No departures this week.",
     "sendCheckinInfo": "Send check-in info",
     "sendCheckoutReminder": "Send checkout reminder",
     "sendReviewRequest": "Send review request",
