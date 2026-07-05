@@ -34,6 +34,7 @@ Guest names/phone numbers are real PII from real bookings: no PII logging to con
 ## Decisions log
 
 - 2026-07-05: Project initialized. Using plain `wa.me` deep links for WhatsApp (no Business API/bot/template approval). No OTA API booking import (none of the channels grant small-property API access) — front desk manual entry is the only intake path, by design.
+- 2026-07-05: Step 1 complete. GitHub repo: [donluka-23/guest-ops-app](https://github.com/donluka-23/guest-ops-app) (branch `main`). Supabase project connected (URL/anon key in `.env.local`, gitignored; `.env.local.example` documents the required vars — note `.gitignore` uses `.env*` with a `!.env*.example` exception, so new example files must follow that naming). Vercel import deferred — user will connect the GitHub repo via the Vercel dashboard themselves when ready (not yet done as of this entry).
 
 ## Explicitly out of scope (do not build, do not scaffold placeholders for)
 
@@ -60,7 +61,7 @@ This project uses **Next.js 16.2.10**, which has real breaking changes vs. Next 
 
 ## Build order status
 
-1. Project scaffold — in progress
+1. Project scaffold — done
 2. DB schema + RLS — not started
 3. Auth — not started
 4. Add/edit guest flow — not started
